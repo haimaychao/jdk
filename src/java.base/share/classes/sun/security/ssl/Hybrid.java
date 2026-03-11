@@ -318,7 +318,7 @@ public class Hybrid {
                 String algorithm) {
             int expectedSecretSize = engineSecretSize();
             if (!(from == 0 && to == expectedSecretSize)) {
-                throw new IndexOutOfBoundsException(
+                throw new IllegalArgumentException(
                         "Invalid range for encapsulation: from = " + from +
                         " to = " + to + ", expected total secret size = " +
                         expectedSecretSize);
@@ -363,7 +363,7 @@ public class Hybrid {
 
             int expectedSecretSize = engineSecretSize();
             if (!(from == 0 && to == expectedSecretSize)) {
-                throw new IndexOutOfBoundsException(
+                throw new IllegalArgumentException(
                         "Invalid range for decapsulation: from = " + from +
                         " to = " + to + ", expected total secret size = " +
                         expectedSecretSize);
