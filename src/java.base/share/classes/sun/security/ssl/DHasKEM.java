@@ -264,7 +264,6 @@ public class DHasKEM implements KEMSpi {
             KeyAgreement ka = KeyAgreement.getInstance(kaAlgorithm);
             ka.init(skE);
             ka.doPhase(pkR, true);
-            // return ka.generateSecret(alg);
             SecretKey secret = ka.generateSecret(alg);
 
             // RFC 8446 section 7.4.2: checks for all-zero
@@ -272,18 +271,14 @@ public class DHasKEM implements KEMSpi {
             if (kaAlgorithm.equals("X25519") ||
                     kaAlgorithm.equals("X448")) {
                 byte[] s = secret.getEncoded();
-                boolean allZero = true;
                 for (byte b : s) {
                     if (b != 0) {
-                        allZero = false;
-                        break;
+                        return secret;
                     }
                 }
-                if (allZero) {
-                    // Trigger ILLEGAL_PARAMETER alert
-                    throw new IllegalArgumentException(
-                            "All-zero shared secret");
-                }
+                // Trigger ILLEGAL_PARAMETER alert
+                throw new IllegalArgumentException(
+                        "All-zero shared secret");
             }
 
             return secret;
