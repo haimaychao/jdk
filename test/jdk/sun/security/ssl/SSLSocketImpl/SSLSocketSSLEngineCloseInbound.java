@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, 2023, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2011, 2026, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -28,7 +28,7 @@
 
 /*
  * @test
- * @bug 8273553 8253368
+ * @bug 8273553 8253368 8379549
  * @summary sun.security.ssl.SSLEngineImpl.closeInbound also has similar error
  *          of JDK-8253368
  * @run main/othervm SSLSocketSSLEngineCloseInbound TLSv1.3
@@ -85,6 +85,7 @@ import java.io.*;
 import java.net.*;
 import java.security.*;
 import java.nio.*;
+import java.util.concurrent.CountDownLatch;
 
 public class SSLSocketSSLEngineCloseInbound {
 
@@ -123,6 +124,8 @@ public class SSLSocketSSLEngineCloseInbound {
      */
     private ByteBuffer cTOs;            // "reliable" transport client->server
     private ByteBuffer sTOc;            // "reliable" transport server->client
+
+    private final CountDownLatch serverReadyLatch = new CountDownLatch(1);
 
     /*
      * The following is to set up the keystores/trust material.
@@ -289,6 +292,8 @@ public class SSLSocketSSLEngineCloseInbound {
                             throw new Exception("Server session is not valid");
                         }
 
+                        // Server signals client it has finished writing
+                        serverReadyLatch.countDown();
                         return;
                     }
 
@@ -365,9 +370,9 @@ public class SSLSocketSSLEngineCloseInbound {
                         throw new Exception("Client's session is not valid");
                     }
 
-                    // Give server a chance to read before we shutdown via
-                    // the try-with-resources block.
-                    Thread.sleep(2000);
+                    // Client waits for server to finish sending data
+                    // before shutdown.
+                    serverReadyLatch.await();
                 } catch (Exception e) {
                     clientException = e;
                 }
