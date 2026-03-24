@@ -28,7 +28,7 @@
 
 /*
  * @test
- * @bug 8273553 8253368 8379549
+ * @bug 8273553 8253368
  * @library /test/lib
  * @summary sun.security.ssl.SSLEngineImpl.closeInbound also has similar error
  *          of JDK-8253368
