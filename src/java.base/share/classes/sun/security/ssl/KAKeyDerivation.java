@@ -204,6 +204,7 @@ public class KAKeyDerivation implements SSLKeyDerivation {
             // deriveHandshakeSecret failure.
             throw context.conContext.fatal(Alert.INTERNAL_ERROR, e);
         } catch (RuntimeException e) {
+            // unexpected provider/runtime failure
             throw context.conContext.fatal(Alert.INTERNAL_ERROR, e);
         } finally {
             KeyUtil.destroySecretKeys(sharedSecret);
@@ -243,6 +244,7 @@ public class KAKeyDerivation implements SSLKeyDerivation {
                     // cryptographic failure
                     throw context.conContext.fatal(Alert.INTERNAL_ERROR, e);
                 } catch (RuntimeException e) {
+                    // unexpected provider/runtime failure
                     throw context.conContext.fatal(Alert.INTERNAL_ERROR, e);
                 }
             } else {
