@@ -360,16 +360,16 @@ public final class KEM {
          * An implementation may choose to not support arbitrary combinations
          * of {@code from}, {@code to}, and {@code algorithm}.
          *
-         * @implSpec
+         * <p>Implementation note:
          * This method delegates validation of the input parameters and
          * the cryptographic decapsulation operation to the underlying
          * provider implementation.
          *
          * A {@code DecapsulateException} should only be thrown when the
          * encapsulation message is malformed or invalid, as specified in
-         * this method’s {@code @throws} clause. Implementations should
-         * avoid revealing a decapsulation operation failure or
-         * cryptographic conditions.
+         * this method’s {@code @throws} clause. Implementators of ML-KEM
+         * algorithm should avoid revealing a decapsulation operation
+         * failure or cryptographic conditions.
          *
          * @param encapsulation the key encapsulation message from the sender.
          *          The size must be equal to the value returned by
