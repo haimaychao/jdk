@@ -367,9 +367,9 @@ public final class KEM {
          *
          * A {@code DecapsulateException} should only be thrown when the
          * encapsulation message is malformed or invalid, as specified in
-         * this method’s {@code @throws} clause. Implementators of ML-KEM
-         * algorithm should avoid revealing a decapsulation operation
-         * failure or cryptographic conditions.
+         * this method’s {@code @throws} clause. Implementations of the
+         * ML-KEM algorithm should not reveal a decapsulation operation
+         * failure and instead return a pseudorandom secret key.
          *
          * @param encapsulation the key encapsulation message from the sender.
          *          The size must be equal to the value returned by
