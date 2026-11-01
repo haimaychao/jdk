@@ -81,6 +81,9 @@ import sun.security.ssl.Hybrid;
  *
  * - ML-KEM
  *
+ * - TLS 1.3 hybrid KEMs for X25519MLKEM768, SecP256r1MLKEM768,
+ *   and SecP384r1MLKEM1024
+ *
  * - HKDF-SHA256, HKDF-SHA384, and HKDF-SHA512
  */
 
@@ -91,7 +94,8 @@ public final class SunJCE extends Provider {
 
     private static final String info = "SunJCE Provider " +
     "(implements RSA, DES, Triple DES, AES, Blowfish, ARCFOUR, RC2, PBE, "
-    + "Diffie-Hellman, HMAC, ChaCha20, DHKEM, ML-KEM, and HKDF)";
+    + "Diffie-Hellman, HMAC, ChaCha20, DHKEM, ML-KEM, X25519MLKEM768, "
+    + "SecP256r1MLKEM768, SecP384r1MLKEM1024, and HKDF)";
 
     /* Are we debugging? -- for developers */
     static final boolean debug = false;
@@ -797,7 +801,6 @@ public final class SunJCE extends Provider {
          */
         attrs = new HashMap<>(Map.of(
                 "ImplementedIn", "Software",
-                "name", "X25519MLKEM768",
                 "left", "ML-KEM-768",
                 "right", "X25519"));
         psHybrid("KeyPairGenerator", "X25519MLKEM768",
@@ -807,7 +810,6 @@ public final class SunJCE extends Provider {
 
         attrs = new HashMap<>(Map.of(
                 "ImplementedIn", "Software",
-                "name", "SecP256r1MLKEM768",
                 "left", "secp256r1",
                 "right", "ML-KEM-768"));
         psHybrid("KeyPairGenerator", "SecP256r1MLKEM768",
@@ -817,7 +819,6 @@ public final class SunJCE extends Provider {
 
         attrs = new HashMap<>(Map.of(
                 "ImplementedIn", "Software",
-                "name", "SecP384r1MLKEM1024",
                 "left", "secp384r1",
                 "right", "ML-KEM-1024"));
         psHybrid("KeyPairGenerator", "SecP384r1MLKEM1024",

@@ -31,6 +31,7 @@
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidParameterException;
 import java.security.InvalidKeyException;
 import java.security.Provider;
 import java.security.Security;
@@ -91,11 +92,19 @@ public class TestHybrid {
             System.out.println("Rejected incorrect parameters for " +
                     group.name);
         }
-        kpg.initialize(256, null);
+        kpg.initialize(-1, null);
         kp = kpg.generateKeyPair();
         if (kp.getPublic().getEncoded().length != group.publicKeyLength) {
             throw new RuntimeException("Unexpected public key length after " +
                     "key size initialization for " + group.name);
+        }
+        try {
+            kpg.initialize(256, null);
+            throw new RuntimeException("Accepted unsupported key size for " +
+                    group.name);
+        } catch (InvalidParameterException expected) {
+            System.out.println("Rejected unsupported key size for " +
+                    group.name);
         }
     }
 

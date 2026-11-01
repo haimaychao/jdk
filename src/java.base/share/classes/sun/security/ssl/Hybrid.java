@@ -37,6 +37,7 @@ import javax.crypto.KEMSpi;
 import javax.crypto.SecretKey;
 import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidParameterException;
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
 import java.security.KeyPair;
@@ -64,7 +65,7 @@ import java.util.Locale;
 //
 // Their public key encoding is the TLS 1.3 key_share encoding, not an
 // X.509 SubjectPublicKeyInfo encoding, and the algorithms have no object
-// identifiers. Hence, the public key’s getFormat() method must return "RAW",
+// identifiers. Hence, the public key's getFormat() method must return "RAW",
 // and getEncoded() must return the raw format of key_share encoding.
 //
 // A provider can represent a negotiated shared secret as an opaque SecretKey.
@@ -160,7 +161,7 @@ public class Hybrid {
                 SecureRandom random)
                 throws InvalidAlgorithmParameterException {
             if (!(params instanceof NamedParameterSpec namedSpec) ||
-                    !name.equals(namedSpec.getName())) {
+                    !name.equalsIgnoreCase(namedSpec.getName())) {
                 throw new InvalidAlgorithmParameterException(
                         "Expected NamedParameterSpec for " + name);
             }
@@ -169,6 +170,9 @@ public class Hybrid {
 
         @Override
         public void initialize(int keysize, SecureRandom random) {
+            if (keysize != -1) {
+                throw new InvalidParameterException("keysize not supported");
+            }
             try {
                 initComponents(random);
             } catch (InvalidAlgorithmParameterException e) {
@@ -330,16 +334,14 @@ public class Hybrid {
                 throw new InvalidAlgorithmParameterException(
                         "KEM parameters are not supported for " + name);
             }
-            if (!(publicKey instanceof PublicKeyImpl)) {
-                publicKey = keyDecoder.decode(publicKey);
+            if (publicKey == null ||
+                    !name.equalsIgnoreCase(publicKey.getAlgorithm())) {
+                throw new InvalidKeyException("Incorrect public key algorithm");
             }
-            if (publicKey instanceof PublicKeyImpl pk &&
-                    name.equals(pk.getAlgorithm())) {
-                return new Handler(left.newEncapsulator(pk.left, secureRandom),
-                        right.newEncapsulator(pk.right, secureRandom),
-                        null, null);
-            }
-            throw new InvalidKeyException();
+            PublicKeyImpl pk = publicKey instanceof PublicKeyImpl hybridKey
+                    ? hybridKey : keyDecoder.decode(publicKey);
+            return new Handler(left.newEncapsulator(pk.left, secureRandom),
+                    right.newEncapsulator(pk.right, secureRandom), null, null);
         }
 
         @Override
@@ -351,7 +353,7 @@ public class Hybrid {
                         "KEM parameters are not supported for " + name);
             }
             if (privateKey instanceof PrivateKeyImpl pk &&
-                    name.equals(pk.getAlgorithm())) {
+                    name.equalsIgnoreCase(pk.getAlgorithm())) {
                 return new Handler(null, null, left.newDecapsulator(pk.left),
                         right.newDecapsulator(pk.right));
             }

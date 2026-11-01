@@ -54,21 +54,19 @@ public class KAKeyDerivation implements SSLKeyDerivation {
     private final PrivateKey localPrivateKey;
     private final PublicKey peerPublicKey;
     private final byte[] keyshare;
-    private final NamedGroup namedGroup;
 
     // Constructor called by Key Agreement
     KAKeyDerivation(String algorithmName,
             HandshakeContext context,
             PrivateKey localPrivateKey,
             PublicKey peerPublicKey) {
-        this(algorithmName, null, context, localPrivateKey,
+        this(algorithmName, context, localPrivateKey,
                 peerPublicKey, null);
     }
 
     // When the constructor called by KEM: store the client's public key or the
     // encapsulated message in keyshare.
     KAKeyDerivation(String algorithmName,
-                    NamedGroup namedGroup,
                     HandshakeContext context,
                     PrivateKey localPrivateKey,
                     PublicKey peerPublicKey,
@@ -78,7 +76,6 @@ public class KAKeyDerivation implements SSLKeyDerivation {
         this.localPrivateKey = localPrivateKey;
         this.peerPublicKey = peerPublicKey;
         this.keyshare = keyshare;
-        this.namedGroup = namedGroup;
     }
 
     @Override

@@ -215,7 +215,7 @@ final class KEMKeyExchange {
                                 ng.equals(kcred.namedGroup)) {
                             String name = ((NamedParameterSpec)
                                     ng.keAlgParamSpec).getName();
-                            return new KAKeyDerivation(name, ng, context,
+                            return new KAKeyDerivation(name, context,
                                     kposs.getPrivateKey(), null,
                                     kcred.getKeyShare());
                         }
